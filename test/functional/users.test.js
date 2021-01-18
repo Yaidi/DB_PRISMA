@@ -19,12 +19,13 @@ describe('Template configs endpoints', () => {
     });
 
     it("doesn't store the user's password in plain text", async () => {
-      const body = validUser();
+      const body = validUser({ email: 'check@password.com' });
 
       const response = await request(app).post('/users/sign-up').send(body);
 
       expect(response.status).toEqual(201);
       const createdUser = await User.query().first();
+
       expect(createdUser).toBeDefined();
       expect(createdUser.password).not.toEqual(body.password);
     });

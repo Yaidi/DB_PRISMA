@@ -1,4 +1,7 @@
 import { Model } from 'objection';
+import { hash } from 'bcrypt';
+
+const SALT_ROUNDS = 10;
 
 class User extends Model {
   $beforeUpdate() {
@@ -14,7 +17,11 @@ class User extends Model {
 }
 
 const insertUser = async ({ email, password }) => {
-  return User.query().insert({ email, password }).returning('*');
+  const hashedPassword = await hash(password, SALT_ROUNDS);
+
+  return User.query()
+    .insert({ email, password: hashedPassword })
+    .returning('*');
 };
 
 export { User as default, insertUser };

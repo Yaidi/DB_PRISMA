@@ -1,5 +1,3 @@
-import { NotFoundError } from 'objection';
-
 import { insertUser } from './models/user';
 import createError from 'http-errors';
 
