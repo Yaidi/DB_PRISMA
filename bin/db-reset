@@ -1,0 +1,24 @@
+#!/bin/bash
+
+set -e
+
+count=0
+
+until pg_isready -h localhost -p 5432 || [ $count -gt 10 ]; do
+  count=$((count+1))
+  echo 'waiting on postgres...'
+  sleep 1
+done
+
+if [[ "$NODE_ENV" == 'test' ]]; then
+  db_name='pg_test'
+else
+  db_name='pg_dev'
+fi
+
+echo "*** Resetting DB: ${db_name} ***"
+
+psql -h localhost -p 5432 -U postgres -c  "DROP DATABASE IF EXISTS $db_name"
+psql -h localhost -p 5432 -U postgres -c  "CREATE DATABASE $db_name"
+
+npm run db:migrate

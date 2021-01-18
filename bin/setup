@@ -1,0 +1,24 @@
+#!/bin/sh
+
+set -e
+
+if [[ -z $(psql -Atqc '\list gp_dev' postgres) ]]; then
+  createdb reports_dev
+fi
+if [[ -z $(psql -Atqc '\list gp_test' postgres) ]]; then
+  createdb reports_test
+fi
+
+if [! -f .env.json ]; then
+  cp .env.sample .env.json
+fi
+
+if [! -f .env ]; then
+  cp .env.docker .env
+fi
+
+yarn install
+
+yarn db:migrate
+yarn db:seed
+NODE_ENV=test yarn db:migrate

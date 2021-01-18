@@ -1,0 +1,54 @@
+openapi: 3.0.0
+info:
+  title: Girl Poly App API
+  description: Api
+  version: 1.0.0
+
+paths:
+  /users/sign-up:
+    post:
+      parameters:
+        - in: body
+          name: email
+          schema:
+            type: string
+            format: email
+          required: true
+      operationId: createUser
+      description: Creates a new user
+      requestBody:
+        description: Details of the user to create
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Report'
+      responses:
+        201:
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id:
+                    type: string
+        400:
+          description: Unsupported request body schema
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+
+components:
+  schemas:
+    User:
+      type: object
+      properties:
+        example:
+          type: string
+          description: Example schema
+          enum: [pdf, excel]

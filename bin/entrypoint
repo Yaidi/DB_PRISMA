@@ -1,0 +1,9 @@
+#!/bin/sh
+
+if [ -z "$AWS_CONTAINER_CREDENTIALS_RELATIVE_URI" ]; then
+  # We are not running in ECS, forget the wrappers
+  exec $@
+else
+  # We are running in ECS, include the wrappers
+  exec env `/bin/ash /opt/alpinecosv2PortMappings.sh` `node docker/images/fetchSecrets.js` $@
+fi

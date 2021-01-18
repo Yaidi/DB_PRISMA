@@ -1,0 +1,116 @@
+#!/bin/sh
+# Basic Usage: bin/generate-report
+# Basic Usage with file open: open $(bin/generate-report -q true | jq -r .url)
+# Usage: bin/generate-report
+#   -p cafecafe-cafe-cafe-8f1a-3d10c382a6a0
+#   -r 02ID02ID02ID
+#   -f excel
+#   -s cost
+#   -t budget
+#   -l es
+#   -n 'custom report title'
+#   -m 'some context about this report'
+#   -o '{"filter": [{"field": "budgets.code", "value": "1","operator": "="}, {"logic": "AND", "field": "budgets.unit", "operator": "IN","value": "ea,ui"}] }'
+
+set -e
+
+port=${PORT:-3000}
+projectId="7e6a0c57-92f6-4120-a383-2c81aae4b332"
+createdBy="SAFZQCBL3ZWR"
+format="pdf"
+service="cost"
+template="budget"
+locale="en"
+message="Some context about this report"
+quietMode=false
+options={}
+title=""
+skipNotifications=true
+
+while getopts "p:r:f:t:s:o:m:l:q:n:k:" opt; do
+  case $opt in
+    p) projectId="$OPTARG"
+    ;;
+    r) createdBy="$OPTARG"
+    ;;
+    f) format="$OPTARG"
+    ;;
+    t) template="$OPTARG"
+    ;;
+    s) service="$OPTARG"
+    ;;
+    o) options="$OPTARG"
+    ;;
+    m) message="$OPTARG"
+    ;;
+    l) locale="$OPTARG"
+    ;;
+    n) title="$OPTARG"
+    ;;
+    k) skipNotifications="${OPTARG}"
+    ;;
+    q) quietMode=true
+    ;;
+    \?)echo "Maybe invalid option -$OPTARG" >&2
+    ;;
+  esac
+done
+
+tokenHeader='x-ads-token-data: { "access_token": { "userid": "'$createdBy'" } }'
+postData='{
+  "format": "'$format'",
+  "service": "'$service'",
+  "template": "'$template'",
+  "projectId": "'$projectId'",
+  "options": '$options',
+  "message": "'$message'",
+  "locale": "'$locale'",
+  "title": "'$title'",
+  "skipNotifications": '$skipNotifications'
+}'
+
+if [ $quietMode = false ]; then
+  echo "request body params: $postData"
+  echo "requested by: $createdBy"
+fi
+
+postResponse=$(curl --include --output - http://localhost:${port}/projects/$projectId/reports \
+  -H 'Content-Type: application/json' \
+  -H "$tokenHeader" \
+  -d "$postData")
+
+httpStatus=$(echo "$postResponse" | head -n 1 |  awk '{print $2}')
+responseBody=$(echo "$postResponse" | tail -1)
+
+if [ $httpStatus != 201 ]; then
+ echo 'Error making request'
+ echo "http status: $httpStatus"
+ echo "body: $responseBody"
+ exit 0
+fi
+
+reportId=$(echo $responseBody | jq -r .id)
+
+fileExtension=$format
+if [ $format = "excel" ]
+then
+  fileExtension="xlsx"
+fi
+
+localFile="tmp/$service-$template.$fileExtension"
+
+echo "Polling report..."
+until [ "$reportStatus" = 'complete' ]; do
+  getResponse=$(curl http://localhost:${port}/projects/$projectId/reports/$reportId -H "$tokenHeader")
+  reportStatus=$(echo $getResponse | jq -r .status)
+  reportUrl=$(echo $getResponse | jq -r .url)
+
+  sleep 1
+done
+
+curl -o $localFile $reportUrl
+echo "File downloaded from: $reportUrl"
+echo "File downloaded to: $localFile"
+if command -v open &> /dev/null; then
+  open $localFile
+fi
