@@ -14,7 +14,8 @@ class Token extends Model {
 }
 
 const insertToken = (user, deviceId) => {
-  return Token.query().insert({ userId: user.id, deviceId }).returning('*');
+  const tokenParams = { userId: user.id, deviceId };
+  return Token.query().insert(tokenParams).returning('*');
 };
 
 export { Token as default, insertToken };

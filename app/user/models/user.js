@@ -1,5 +1,5 @@
 import { Model } from 'objection';
-import { hash } from 'bcrypt';
+import { hash, compare } from 'bcrypt';
 
 const SALT_ROUNDS = 10;
 
@@ -24,4 +24,11 @@ const insertUser = async ({ username, password }) => {
     .returning('*');
 };
 
-export { User as default, insertUser };
+const findUserByUsername = async (username) => {
+  return User.query().where({ username }).first().throwIfNotFound();
+};
+
+const isPasswordValid = async (user, password) => {
+  return compare(user.password, password);
+};
+export { User as default, insertUser, findUserByUsername, isPasswordValid };
