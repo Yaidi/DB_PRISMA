@@ -21,7 +21,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/Report'
+              $ref: '#/components/schemas/User'
       responses:
         201:
           description: Success
@@ -47,7 +47,12 @@ components:
     User:
       type: object
       properties:
-        example:
+        username:
           type: string
-          description: Example schema
-          enum: [pdf, excel]
+          description: User identifier
+        password:
+          type: string
+          description: User's password
+        devideId:
+          type: string
+          description: Unique identifier for the device

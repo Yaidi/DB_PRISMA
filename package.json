@@ -10,6 +10,7 @@
     "start": "NODE_PATH=. bin/www",
     "debug": "NODE_PATH=. nodemon --trace-warnings --inspect bin/www",
     "db:migrate": "knex migrate:latest",
+    "db:migrate:undo": "knex migrate:down",
     "db:seed": "knex seed:run",
     "test": "NODE_PATH=. TZ=UTC jest --silent --testPathPattern app/",
     "test:functional": "NODE_PATH=. jest --detectOpenHandles --forceExit test/functional/*"

@@ -9,8 +9,10 @@ describe('Template configs endpoints', () => {
   describe('POST /users/sign-up', () => {
     it('responds with 201 the, created user and the new token', async () => {
       const body = validUser();
-
-      const response = await request(app).post('/users/sign-up').send(body);
+      const deviceId = 'b4b252a0-5cc6-446c-b124-365bd85cee90';
+      const response = await request(app)
+        .post('/users/sign-up')
+        .send({ ...body, deviceId });
 
       expect(response.status).toEqual(201);
       expect(response.body).toMatchObject(
@@ -25,8 +27,10 @@ describe('Template configs endpoints', () => {
 
     it("doesn't store the user's password in plain text", async () => {
       const body = validUser({ username: 'otherUserName' });
-
-      const response = await request(app).post('/users/sign-up').send(body);
+      const deviceId = 'b4b252a0-5cc6-446c-b124-365bd85cee90';
+      const response = await request(app)
+        .post('/users/sign-up')
+        .send({ ...body, deviceId });
 
       expect(response.status).toEqual(201);
       const createdUser = await User.query().first();
