@@ -3,7 +3,7 @@ exports.up = async function (knex) {
 
   await knex.schema.createTable('users', (table) => {
     table.uuid('id').primary().defaultTo(knex.raw('uuid_generate_v4()'));
-    table.string('email').notNullable();
+    table.string('username').notNullable();
     table.string('password').notNullable();
     table.timestamp('created_at').notNullable().defaultTo(knex.raw('NOW()'));
     table.timestamp('updated_at').notNullable().defaultTo(knex.raw('NOW()'));

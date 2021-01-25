@@ -16,11 +16,11 @@ class User extends Model {
   }
 }
 
-const insertUser = async ({ email, password }) => {
+const insertUser = async ({ username, password }) => {
   const hashedPassword = await hash(password, SALT_ROUNDS);
 
   return User.query()
-    .insert({ email, password: hashedPassword })
+    .insert({ username, password: hashedPassword })
     .returning('*');
 };
 

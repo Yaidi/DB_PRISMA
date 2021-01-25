@@ -1,5 +1,5 @@
 const valid = (props) => ({
-  email: 'some@email.com',
+  username: 'SomeUserName',
   password: 'mySup3rS3cuR3P@ssw0rd',
   ...props,
 });

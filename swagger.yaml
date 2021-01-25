@@ -9,10 +9,9 @@ paths:
     post:
       parameters:
         - in: body
-          name: email
+          name: username
           schema:
             type: string
-            format: email
           required: true
       operationId: createUser
       description: Creates a new user

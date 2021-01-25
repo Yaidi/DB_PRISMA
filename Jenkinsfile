@@ -13,8 +13,6 @@ node('aws-centos') {
   currentDir = sh(script: 'pwd', returnStdout: true).trim()
   common.emailList = 'jhoanegar@gmail.com'
   common.emailTemplatePath = "${currentDir}/CI/Jenkins/template.html"
-  common.shouldNotifySlack = true
-  common.slackChannel = '#acs-reports-ops-np'
 
   stage ('Checkout code') {
     def common_scm = new ors.utils.common_scm(steps, env)
