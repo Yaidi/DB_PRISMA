@@ -6,7 +6,7 @@ module.exports = {
   development: {
     client: 'pg',
     connection: {
-      database: 'pg_dev',
+      database: 'gp_dev',
       host: nconf.get('DB_HOST'),
       user: nconf.get('DB_USER'),
       password: nconf.get('DB_PASSWORD'),
@@ -22,7 +22,7 @@ module.exports = {
   test: {
     client: 'pg',
     connection: {
-      database: 'pg_test',
+      database: 'gp_test',
       user: nconf.get('DB_USER'),
       password: nconf.get('DB_PASSWORD'),
     },
