@@ -12,7 +12,6 @@ services:
       - PGHOST=db
       - PGUSER=postgres
       - DATABASE_URL=${DATABASE_URL}
-
  
   db:
     image: postgres:12.1
