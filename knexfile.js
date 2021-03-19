@@ -37,6 +37,9 @@ module.exports = {
   production: {
     client: 'pg',
     connection: `${nconf.get('DATABASE_URL')}?ssl=true`,
+    ssl: {
+      rejectUnauthorized: false,
+    },
     migrations: {
       directory: 'db/migrations',
     },
